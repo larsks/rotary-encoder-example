@@ -4,6 +4,9 @@
 #define CW 0
 #define CCW 1
 
+#define RANGE_MODE_WRAP 0
+#define RANGE_MODE_BOUNDED 1
+
 void updatePositionISR();
 
 class RotaryEncoder {
@@ -16,13 +19,15 @@ private:
   volatile int lastStateA;
   long minValue;
   long maxValue;
+  int rangeMode;
 
 public:
-  RotaryEncoder(int encoderPinA, int encoderPinB, long minVal, long maxVal) {
+  RotaryEncoder(int encoderPinA, int encoderPinB, long minVal, long maxVal, int range_mode = RANGE_MODE_BOUNDED) {
     pinA = encoderPinA;
     pinB = encoderPinB;
     minValue = minVal;
     maxValue = maxVal;
+    rangeMode = range_mode;
     position = minVal;
     direction = CW;
     lastPosition = minVal;
@@ -45,13 +50,23 @@ public:
       if (currentStateB == HIGH) {
         position++;
         direction = CW;
-        if (position > maxValue)
-          position = minValue;
+        if (position > maxValue) {
+          if (rangeMode == RANGE_MODE_WRAP) {
+            position = minValue;
+          } else {
+            position = maxValue;
+          }
+        }
       } else {
         position--;
         direction = CCW;
-        if (position < minValue)
-          position = maxValue;
+        if (position < minValue) {
+          if (rangeMode == RANGE_MODE_WRAP) {
+            position = maxValue;
+          } else {
+            position = minValue;
+          }
+        }
       }
     }
 
@@ -71,7 +86,7 @@ public:
   }
 };
 
-RotaryEncoder encoder(ENCODERA, ENCODERB, 0, 599);
+RotaryEncoder encoder(ENCODERA, ENCODERB, 0, 2399);
 
 void updatePositionISR() { encoder.updatePosition(); }
 
