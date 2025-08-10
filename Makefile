@@ -1,5 +1,5 @@
 DEVICE ?= /dev/ttyACM0
-BOARD ?= rp2040:rp2040:waveshare_rp2040_zero
+BOARD ?= rp2040:rp2040:waveshare_rp2040_zero:usbstack=tinyusb
 
 compile:
 	arduino-cli compile -b $(BOARD)
