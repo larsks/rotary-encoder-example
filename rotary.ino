@@ -99,7 +99,6 @@ RotaryEncoder encoder(ENCODERA, ENCODERB, 0, 599, RANGE_MODE_WRAP);
 void updatePositionISR() { encoder.updatePosition(); }
 
 void setup() {
-  Serial.begin(115200);
   usb_hid.setPollInterval(2);
   usb_hid.setReportDescriptor(desc_hid_report, sizeof(desc_hid_report));
   usb_hid.begin();
@@ -128,10 +127,8 @@ void loop() {
         uint16_t usage_code = 0;
         
         if (positionAccumulator > 0) {
-          Serial.println("Volume Up");
           usage_code = HID_USAGE_CONSUMER_VOLUME_INCREMENT;
         } else {
-          Serial.println("Volume Down");
           usage_code = HID_USAGE_CONSUMER_VOLUME_DECREMENT;
         }
         
